@@ -6,6 +6,7 @@
 
 struct block datetime_block_init(void);
 struct block ram_block_init(void);
+struct block sound_block_init(void);
 
 const char *hexcolor(uint32_t color) {
 	static char buf[8];
@@ -22,6 +23,7 @@ int main(void) {
 	struct block blocks[] = {
 		datetime_block_init(),
 		ram_block_init(),
+		sound_block_init(),
 	};
 	int numblocks = sizeof(blocks) / sizeof(struct block);
 

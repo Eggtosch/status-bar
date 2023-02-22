@@ -3,7 +3,7 @@ RM     := rm -f
 
 LDFLAGS := -pipe -flto
 
-CFILES         := src/main.c src/datetime_block.c src/ram_block.c
+CFILES         := src/main.c src/datetime_block.c src/ram_block.c src/sound_block.c
 
 FLAGS  := -Wall -Wextra -Werror -Isrc/ -pipe -O2 -flto -march=native -s -MMD -MP
 OBJDIR := bin
