@@ -5,6 +5,7 @@
 #include <block.h>
 
 struct block datetime_block_init(void);
+struct block ram_block_init(void);
 
 const char *hexcolor(uint32_t color) {
 	static char buf[8];
@@ -18,8 +19,9 @@ int main(void) {
 	printf("[\n");
 
 	uint64_t seconds = 0;
-	struct block blocks[1] = {
+	struct block blocks[] = {
 		datetime_block_init(),
+		ram_block_init(),
 	};
 	int numblocks = sizeof(blocks) / sizeof(struct block);
 
