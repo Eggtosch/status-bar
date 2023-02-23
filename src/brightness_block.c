@@ -7,6 +7,9 @@ static int max_brightness = -1;
 
 static void cache_max_brightness(void) {
 	FILE *f = fopen("/sys/class/backlight/intel_backlight/max_brightness", "r");
+	if (f == NULL) {
+		return;
+	}
 
 	char line[32];
 	fgets(line, sizeof(line), f);
@@ -18,6 +21,9 @@ static void cache_max_brightness(void) {
 
 static void brightness_block_update(struct block *b) {
 	FILE *f = fopen("/sys/class/backlight/intel_backlight/brightness", "r");
+	if (f == NULL) {
+		return;
+	}
 
 	char line[32];
 	fgets(line, sizeof(line), f);
