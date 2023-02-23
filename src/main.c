@@ -46,8 +46,13 @@ int main(void) {
 			}
 			blk->update(blk);
 
-			const char *fmt_str = "{\"color\":\"%s\",\"full_text\":\"%s\"}";
-			snprintf(blk->buffer, BLOCK_BUFFER_SIZE, fmt_str, hexcolor(blk->color), blk->text);
+			if (blk->color != 0xffffff) {
+				const char *fmt_str = "{\"color\":\"%s\",\"full_text\":\"%s\"}";
+				snprintf(blk->buffer, BLOCK_BUFFER_SIZE, fmt_str, hexcolor(blk->color), blk->text);
+			} else {
+				const char *fmt_str = "{\"full_text\":\"%s\"}";
+				snprintf(blk->buffer, BLOCK_BUFFER_SIZE, fmt_str, blk->text);
+			}
 		}
 
 		printf("[");
