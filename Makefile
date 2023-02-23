@@ -5,7 +5,7 @@ LDFLAGS := -pipe -flto
 
 CFILES         := src/main.c src/datetime_block.c src/ram_block.c src/sound_block.c \
 		  src/battery_block.c src/brightness_block.c src/cpu_block.c \
-		  src/wifi_block.c
+		  src/wifi_block.c src/eth_block.c
 
 FLAGS  := -Wall -Wextra -Werror -Isrc/ -pipe -O2 -flto -march=native -s -MMD -MP
 OBJDIR := bin
