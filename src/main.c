@@ -50,7 +50,7 @@ int main(void) {
 	while (1) {
 		for (int i = 0; i < numblocks; i++) {
 			struct block *blk = &blocks[i];
-			if (seconds % blk->interval != 0) {
+			if (!got_signal && seconds % blk->interval != 0) {
 				continue;
 			}
 			if (got_signal && !blk->update_after_signal) {
