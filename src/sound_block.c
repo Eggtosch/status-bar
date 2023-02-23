@@ -16,12 +16,16 @@ static void sound_update(struct block *b) {
 
 	pclose(f);
 
+	bool muted;
 	if (strstr(buf, "Mute: yes") != NULL) {
 		b->color = 0xffff00;
+		muted = true;
 	} else if (strstr(buf, "Mute: no") != NULL) {
 		b->color = 0xffffff;
+		muted = false;
 	} else {
 		b->color = 0xff0000;
+		muted = true;
 	}
 
 	char *volume_line = strstr(buf, "Volume:");
@@ -43,7 +47,17 @@ static void sound_update(struct block *b) {
 		percentage--;
 	}
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%d%%", volume);
+	const char *icon;
+	if (muted) {
+		icon = "󰖁";
+	} else if (volume == 0) {
+		icon = "󰕿";
+	} else if (volume <= 50) {
+		icon = "󰖀";
+	} else {
+		icon = "󰕾";
+	}
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %d%%", icon, volume);
 }
 
 struct block sound_block_init(void) {
