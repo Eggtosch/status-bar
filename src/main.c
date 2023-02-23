@@ -9,6 +9,7 @@ struct block datetime_block_init(void);
 struct block ram_block_init(void);
 struct block sound_block_init(void);
 struct block battery_block_init(void);
+struct block brightness_block_init(void);
 
 const char *hexcolor(uint32_t color) {
 	static char buf[8];
@@ -29,6 +30,7 @@ int main(void) {
 
 	uint64_t seconds = 0;
 	struct block blocks[] = {
+		brightness_block_init(),
 		battery_block_init(),
 		sound_block_init(),
 		ram_block_init(),
