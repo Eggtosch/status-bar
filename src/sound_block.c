@@ -57,7 +57,7 @@ static void sound_update(struct block *b) {
 	} else {
 		icon = "󰕾";
 	}
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %d%%", icon, volume);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s  %d%%", icon, volume);
 }
 
 struct block sound_block_init(void) {
