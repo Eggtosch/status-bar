@@ -12,6 +12,7 @@ static void datetime_update(struct block *b) {
 struct block datetime_block_init(void) {
 	struct block b;
 	b.interval = 1;
+	b.update_after_signal = 0;
 	b.update = datetime_update;
 	b.color = 0xffffff;
 	return b;

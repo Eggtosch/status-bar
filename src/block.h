@@ -6,6 +6,7 @@
 
 struct block {
 	int interval;
+	int update_after_signal;
 	void (*update)(struct block*);
 
 	uint32_t color;

@@ -40,7 +40,8 @@ struct block brightness_block_init(void) {
 
 	struct block b;
 	b.interval = 1;
-	b.color = 0xffffff;
+	b.update_after_signal = 1;
 	b.update = brightness_block_update;
+	b.color = 0xffffff;
 	return b;
 }

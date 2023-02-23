@@ -19,8 +19,11 @@ const char *hexcolor(uint32_t color) {
 	return buf;
 }
 
+static int got_signal = 0;
+
 void sig_handler(int signum) {
 	(void) signum;
+	got_signal = 1;
 }
 
 int main(void) {
@@ -46,6 +49,10 @@ int main(void) {
 			if (seconds % blk->interval != 0) {
 				continue;
 			}
+			if (got_signal && !blk->update_after_signal) {
+				continue;
+			}
+
 			blk->update(blk);
 
 			if (blk->color != 0xffffff) {
@@ -66,8 +73,11 @@ int main(void) {
 		printf("]\n");
 		fflush(stdout);
 
+		got_signal = 0;
 		sleep(1);
-		seconds++;
+		if (!got_signal) {
+			seconds++;
+		}
 
 		printf(",");
 	}
