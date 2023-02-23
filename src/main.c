@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 
 #include <block.h>
 
@@ -23,7 +24,6 @@ static int got_signal = 0;
 
 void sig_handler(int signum) {
 	(void) signum;
-	got_signal = 1;
 }
 
 int main(void) {
@@ -42,6 +42,10 @@ int main(void) {
 		datetime_block_init(),
 	};
 	int numblocks = sizeof(blocks) / sizeof(struct block);
+
+	struct timespec t;
+	t.tv_sec = 1;
+	t.tv_nsec = 0;
 
 	while (1) {
 		for (int i = 0; i < numblocks; i++) {
@@ -74,9 +78,12 @@ int main(void) {
 		fflush(stdout);
 
 		got_signal = 0;
-		sleep(1);
-		if (!got_signal) {
+		if (nanosleep(&t, &t) != -1) {
+			t.tv_sec = 1;
+			t.tv_nsec = 0;
 			seconds++;
+		} else {
+			got_signal = 1;
 		}
 
 		printf(",");
