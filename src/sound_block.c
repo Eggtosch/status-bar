@@ -5,7 +5,7 @@
 #include <block.h>
 
 static void sound_update(struct block *b) {
-	FILE *f = popen("amixer get Master", "r");
+	FILE *f = popen("amixer -M get Master", "r");
 
 	while (fgetc(f) != '[');
 
