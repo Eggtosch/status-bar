@@ -84,7 +84,7 @@ static void cpu_block_update(struct block *b) {
 	int used = idle > 100 ? 0 : 100 - idle;
 	cpu_last_usage = usage;
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%02d%%", used);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰻠  %02d%%", used);
 }
 
 #endif
