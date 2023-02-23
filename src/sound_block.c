@@ -16,18 +16,19 @@ static void sound_update(struct block *b) {
 		volume += c - '0';
 	}
 
-	while (fgetc(f) != '[');
-
-	char buf[4];
-	fgets(buf, 4, f);
-	bool muted = false;
-	if (strncmp(buf, "off", 3) == 0) {
-		muted = true;
+	char line[256];
+	fgets(line, sizeof(line), f);
+	if (strstr(line, "on") != NULL) {
+		b->color = 0xffffff;
+	} else if (strstr(line, "off") != NULL) {
+		b->color = 0xffff00;
+	} else {
+		b->color = 0xff0000;
 	}
+
 	pclose(f);
 
 	snprintf(b->text, BLOCK_BUFFER_SIZE, "%d%%", volume);
-	b->color = muted ? 0xffff00 : 0xffffff;
 }
 
 struct block sound_block_init(void) {
