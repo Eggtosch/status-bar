@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include <block.h>
 
@@ -16,7 +17,13 @@ const char *hexcolor(uint32_t color) {
 	return buf;
 }
 
+void sig_handler(int signum) {
+	(void) signum;
+}
+
 int main(void) {
+	signal(SIGUSR1, sig_handler);
+
 	printf("{\"version\":1}\n");
 	printf("[\n");
 
