@@ -39,7 +39,7 @@ struct block brightness_block_init(void) {
 	cache_max_brightness();
 
 	struct block b;
-	b.interval = 1;
+	b.interval = 15;
 	b.update_after_signal = 1;
 	b.update = brightness_block_update;
 	b.color = 0xffffff;
