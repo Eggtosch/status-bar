@@ -24,6 +24,7 @@ static void sound_update(struct block *b) {
 	if (strncmp(buf, "off", 3) == 0) {
 		muted = true;
 	}
+	pclose(f);
 
 	snprintf(b->text, BLOCK_BUFFER_SIZE, "%d%%", volume);
 	b->color = muted ? 0xffff00 : 0xffffff;
