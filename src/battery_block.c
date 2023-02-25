@@ -52,7 +52,7 @@ static void battery_update(struct block *b) {
 	} else {
 		icon = bat_levels_chrg[(int) charge_percent / 10];
 	}
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s  %.2f%%", icon, charge_percent);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %.2f%%", icon, charge_percent);
 
 	fclose(f);
 	fclose(f2);

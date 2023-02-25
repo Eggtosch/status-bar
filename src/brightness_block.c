@@ -30,7 +30,8 @@ static void brightness_block_update(struct block *b) {
 
 	int brightness = atoi(line);
 	int percentage = brightness * 100 / max_brightness;
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰃠  %d%%", percentage);
+
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰃠 %d%%", percentage);
 
 	fclose(f);
 }

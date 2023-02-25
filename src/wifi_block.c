@@ -16,7 +16,7 @@ static void wifi_block_update(struct block *b) {
 
 	if (strncmp(line, "down", 4) == 0) {
 		b->color = 0xff0000;
-		strcpy(b->text, "󰖪  down");
+		strcpy(b->text, "󰖪 down");
 		return;
 	}
 
@@ -48,7 +48,7 @@ static void wifi_block_update(struct block *b) {
 		}
 	}
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "  %d%% at %s", value * 100 / max, essid);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, " %d%% at %s", value * 100 / max, essid);
 
 	pclose(iwconfig);
 }

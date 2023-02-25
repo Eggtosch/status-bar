@@ -63,7 +63,7 @@ static void speed_block_update(struct block *b) {
 	const char *tx_u = get_unit(diff_tx);
 	const char *rx_u = get_unit(diff_rx);
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "󱚺 %5.1f %s 󱚶 %5.1f %s", tx_d, tx_u, rx_d, rx_u);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰕒 %5.1f %s 󰇚 %5.1f %s", tx_d, tx_u, rx_d, rx_u);
 }
 
 struct block speed_block_init(void) {

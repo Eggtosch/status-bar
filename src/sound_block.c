@@ -57,7 +57,9 @@ static void sound_update(struct block *b) {
 	} else {
 		icon = "󰕾";
 	}
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s  %d%%", icon, volume);
+
+	const char *padding = volume < 10 ? " " : "";
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %s%d%%", icon, padding, volume);
 }
 
 struct block sound_block_init(void) {

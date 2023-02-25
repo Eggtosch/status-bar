@@ -37,7 +37,7 @@ static void ram_block_update(struct block *b) {
 
 	double used_gb = (g_total_kb - avail_kb) / 1048576.0;
 	double total_gb = g_total_kb / 1048576.0;
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰘚  %.1f GiB/%.1f GiB", used_gb, total_gb);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰘚 %.1f GiB/%.1f GiB", used_gb, total_gb);
 }
 
 struct block ram_block_init(void) {

@@ -15,7 +15,7 @@ static void eth_block_update(struct block *b) {
 	fclose(state);
 
 	if (strncmp(line, "down", 4) == 0) {
-		strcpy(b->text, "󰌙  down");
+		strcpy(b->text, "󰌙 down");
 		b->color = 0xff0000;
 		return;
 	}
@@ -31,7 +31,7 @@ static void eth_block_update(struct block *b) {
 	fscanf(speed, "%d", &mbits);
 	fclose(speed);
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰌘  %d Mbit/s", mbits);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰌘 %d Mbit/s", mbits);
 }
 
 struct block eth_block_init(void) {
