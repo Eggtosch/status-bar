@@ -95,7 +95,7 @@ struct block cpu_block_init(void) {
 
 	struct block b;
 	b.interval = 1;
-	b.update_after_signal = 0;
+	b.update_after_signal = false;
 	b.update = cpu_block_update;
 	b.color = 0xffffff;
 	return b;

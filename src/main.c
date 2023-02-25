@@ -23,7 +23,7 @@ const char *hexcolor(uint32_t color) {
 	return buf;
 }
 
-static int got_signal = 0;
+static bool got_signal = false;
 
 void sig_handler(int signum) {
 	(void) signum;
@@ -83,13 +83,13 @@ int main(void) {
 		printf("]\n");
 		fflush(stdout);
 
-		got_signal = 0;
+		got_signal = false;
 		if (nanosleep(&t, &t) != -1) {
 			t.tv_sec = 1;
 			t.tv_nsec = 0;
 			seconds++;
 		} else {
-			got_signal = 1;
+			got_signal = true;
 		}
 
 		printf(",");

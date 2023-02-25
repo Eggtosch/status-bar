@@ -65,7 +65,7 @@ static void sound_update(struct block *b) {
 struct block sound_block_init(void) {
 	struct block b;
 	b.interval = 15;
-	b.update_after_signal = 1;
+	b.update_after_signal = true;
 	b.update = sound_update;
 	b.color = 0xffffff;
 
