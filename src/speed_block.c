@@ -25,9 +25,7 @@ static uint64_t get_statistic(const char *file) {
 }
 
 static const char *get_unit(uint64_t value) {
-	if (value < 1024) {
-		return " B/s ";
-	} else if (value < 1024 * 1024) {
+	if (value < 1024 * 1024) {
 		return "KiB/s";
 	} else if (value < 1024 * 1024 * 1024) {
 		return "MiB/s";
@@ -38,7 +36,7 @@ static const char *get_unit(uint64_t value) {
 
 static double normalize(uint64_t value) {
 	if (value < 1024) {
-		return value;
+		return 0.0;
 	} else if (value < 1024 * 1024) {
 		return value / 1024.0;
 	} else if (value < 1024 * 1024 * 1024) {
