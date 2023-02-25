@@ -8,6 +8,7 @@ static void eth_block_update(struct block *b) {
 
 	FILE *state = fopen("/sys/class/net/enp0s13f0u3c2/operstate", "r");
 	if (state == NULL) {
+		strcpy(b->text, "");
 		return;
 	}
 
