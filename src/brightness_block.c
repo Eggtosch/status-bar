@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <block.h>
 
@@ -25,13 +26,16 @@ static void brightness_block_update(struct block *b) {
 		return;
 	}
 
+	bool nightmode = access("/home/oskar/.config/sway/data/nightmode", F_OK) == 0;
+
 	char line[32];
 	fgets(line, sizeof(line), f);
 
 	int brightness = atoi(line);
 	int percentage = brightness * 100 / max_brightness;
 
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "󰃠 %d%%", percentage);
+	const char *icon = nightmode ? "" : "󰃠";
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %d%%", icon, percentage);
 
 	fclose(f);
 }
