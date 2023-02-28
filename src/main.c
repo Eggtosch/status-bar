@@ -14,6 +14,7 @@ struct block brightness_block_init(void);
 struct block cpu_block_init(void);
 struct block wifi_block_init(void);
 struct block eth_block_init(void);
+struct block usbeth_block_init(void);
 struct block speed_block_init(void);
 
 const char *hexcolor(uint32_t color) {
@@ -38,6 +39,7 @@ int main(void) {
 	uint64_t seconds = 0;
 	struct block blocks[] = {
 		speed_block_init(),
+		usbeth_block_init(),
 		eth_block_init(),
 		wifi_block_init(),
 		cpu_block_init(),
