@@ -8,13 +8,13 @@ static int g_charge_full = -1;
 static const char *bat_levels[] = {
 	"󰁺", "󰁻", "󰁼", "󰁽",
 	"󰁾", "󰁿", "󰂀", "󰂁",
-	"󰂂", "󰁹",
+	"󰂂", "󰁹", "󰁹",
 };
 
 static const char *bat_levels_chrg[] = {
 	"󰢜", "󰂆", "󰂇", "󰂈",
 	"󰢝", "󰂉", "󰢞", "󰂊",
-	"󰂋", "󰂅",
+	"󰂋", "󰂅", "󰂅",
 };
 
 static void cache_charge_full(void) {
