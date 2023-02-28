@@ -6,6 +6,21 @@
 static void wifi_block_update(struct block *b) {
 	char line[256];
 
+	bool airplane_mode = false;
+	FILE *rfkill = fopen("/sys/class/rfkill/rfkill1/soft", "r");
+	if (rfkill != NULL) {
+		int val;
+		fscanf(rfkill, "%d", &val);
+		airplane_mode = val == 1;
+		fclose(rfkill);
+	}
+
+	if (airplane_mode) {
+		b->color = 0xff0000;
+		strcpy(b->text, "󰀝 airplane mode");
+		return;
+	}
+
 	FILE *state = fopen("/sys/class/net/wlp166s0/operstate", "r");
 	if (state == NULL) {
 		return;
