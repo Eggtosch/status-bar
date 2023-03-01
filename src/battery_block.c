@@ -8,13 +8,13 @@ static int g_charge_full = -1;
 static const char *bat_levels[] = {
 	"󰁺", "󰁻", "󰁼", "󰁽",
 	"󰁾", "󰁿", "󰂀", "󰂁",
-	"󰂂", "󰁹", "󰁹",
+	"󰂂", "󰁹",
 };
 
 static const char *bat_levels_chrg[] = {
 	"󰢜", "󰂆", "󰂇", "󰂈",
 	"󰢝", "󰂉", "󰢞", "󰂊",
-	"󰂋", "󰂅", "󰂅",
+	"󰂋", "󰂅",
 };
 
 static void cache_charge_full(void) {
@@ -46,11 +46,19 @@ static void battery_update(struct block *b) {
 
 	float charge_percent = charge_now / (double) g_charge_full * 100;
 	int discharging = strcmp(status, "Discharging") == 0;
+
+	int index = (int) charge_percent / 10;
+	if (index < 0) {
+		index = 0;
+	} else if (index > 9) {
+		index = 9;
+	}
+
 	const char *icon;
 	if (discharging) {
-		icon = bat_levels[(int) charge_percent / 10];
+		icon = bat_levels[index];
 	} else {
-		icon = bat_levels_chrg[(int) charge_percent / 10];
+		icon = bat_levels_chrg[index];
 	}
 	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %.2f%%", icon, charge_percent);
 
