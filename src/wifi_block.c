@@ -43,7 +43,7 @@ static void wifi_block_update(struct block *b) {
         }
 
 	char essid[100];
-	int value, max;
+	int value = 1, max = 1;
 	while (fgets(line, sizeof(line), iwconfig)) {
 		char *essid_loc = strstr(line, "ESSID");
 		if (essid_loc != NULL) {
