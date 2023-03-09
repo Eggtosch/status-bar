@@ -14,9 +14,13 @@ OBJS   := $(CFILES:%.c=$(OBJDIR)/%.o)
 HEADER_DEPS := $(CFILES:%.c=$(OBJDIR)/%.d)
 
 
-.PHONY: all
+.PHONY: all install
 all: $(OBJDIR) $(BINARY)
 
+install: all
+	killall -9 status-bar
+	cp $(BINARY) ~/.config/sway/status-bar
+	swaymsg reload
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)/src
