@@ -11,6 +11,7 @@ struct block ram_block_init(void);
 struct block sound_block_init(void);
 struct block battery_block_init(void);
 struct block brightness_block_init(void);
+struct block cursor_block_init(void);
 struct block cpu_block_init(void);
 struct block wifi_block_init(void);
 struct block eth_block_init(void);
@@ -43,6 +44,7 @@ int main(void) {
 		eth_block_init(),
 		wifi_block_init(),
 		cpu_block_init(),
+		cursor_block_init(),
 		brightness_block_init(),
 		battery_block_init(),
 		sound_block_init(),
