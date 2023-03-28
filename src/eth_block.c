@@ -6,7 +6,7 @@
 static void eth_block_update(struct block *b) {
 	char line[256];
 
-	FILE *state = fopen("/sys/class/net/enp0s13f0u3c2/operstate", "r");
+	FILE *state = fopen("/sys/class/net/enp0s13f0u1/operstate", "r");
 	if (state == NULL) {
 		strcpy(b->text, "");
 		return;
@@ -23,7 +23,7 @@ static void eth_block_update(struct block *b) {
 
 	b->color = 0x00ff00;
 
-	FILE *speed = fopen("/sys/class/net/enp0s13f0u3c2/speed", "r");
+	FILE *speed = fopen("/sys/class/net/enp0s13f0u1/speed", "r");
 	if (speed == NULL) {
 		return;
 	}
