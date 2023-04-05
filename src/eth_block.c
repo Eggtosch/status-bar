@@ -1,12 +1,23 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <block.h>
 
 static void eth_block_update(struct block *b) {
+	char operstate_file[] = "/sys/class/net/enp0s13f0u1/operstate";
+	char speed_file[] = "/sys/class/net/enp0s13f0u1/speed";
+	for (int i = 0; i < 4; i++) {
+		operstate_file[25] = '1' + i;
+		speed_file[25] = '1' + i;
+		if (access(operstate_file, F_OK) == 0) {
+			break;
+		}
+	}
+
 	char line[256];
 
-	FILE *state = fopen("/sys/class/net/enp0s13f0u1/operstate", "r");
+	FILE *state = fopen(operstate_file, "r");
 	if (state == NULL) {
 		strcpy(b->text, "");
 		return;
@@ -23,7 +34,7 @@ static void eth_block_update(struct block *b) {
 
 	b->color = 0x00ff00;
 
-	FILE *speed = fopen("/sys/class/net/enp0s13f0u1/speed", "r");
+	FILE *speed = fopen(speed_file, "r");
 	if (speed == NULL) {
 		return;
 	}

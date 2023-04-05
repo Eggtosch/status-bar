@@ -1,12 +1,23 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include <block.h>
 
 #define WIFI_TX "/sys/class/net/wlp166s0/statistics/tx_bytes"
 #define WIFI_RX "/sys/class/net/wlp166s0/statistics/rx_bytes"
-#define ETH_TX "/sys/class/net/enp0s13f0u3c2/statistics/tx_bytes"
-#define ETH_RX "/sys/class/net/enp0s13f0u3c2/statistics/rx_bytes"
+
+const char *eth_stat(bool tx) {
+	static char file[] = "/sys/class/net/enp0s13f0u1/statistics/tx_bytes";
+	for (int i = 0; i < 4; i++) {
+		file[25] = '1' + i;
+		file[38] = tx ? 't' : 'r';
+		if (access(file, F_OK) == 0) {
+			return file;
+		}
+	}
+	return "";
+}
 
 static uint64_t last_bytes_tx;
 static uint64_t last_bytes_rx;
@@ -47,8 +58,8 @@ static double normalize(uint64_t value) {
 }
 
 static void speed_block_update(struct block *b) {
-	uint64_t bytes_tx = get_statistic(WIFI_TX) + get_statistic(ETH_TX);
-	uint64_t bytes_rx = get_statistic(WIFI_RX) + get_statistic(ETH_RX);
+	uint64_t bytes_tx = get_statistic(WIFI_TX) + get_statistic(eth_stat(true));
+	uint64_t bytes_rx = get_statistic(WIFI_RX) + get_statistic(eth_stat(false));
 
 	uint64_t diff_tx = bytes_tx - last_bytes_tx;
 	uint64_t diff_rx = bytes_rx - last_bytes_rx;
@@ -65,8 +76,8 @@ static void speed_block_update(struct block *b) {
 }
 
 struct block speed_block_init(void) {
-	last_bytes_tx = get_statistic(WIFI_TX) + get_statistic(ETH_TX);
-	last_bytes_rx = get_statistic(WIFI_RX) + get_statistic(ETH_RX);
+	last_bytes_tx = get_statistic(WIFI_TX) + get_statistic(eth_stat(true));
+	last_bytes_rx = get_statistic(WIFI_RX) + get_statistic(eth_stat(false));
 
 	struct block b;
 	b.interval = 1;
