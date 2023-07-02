@@ -4,31 +4,56 @@
 
 #include <block.h>
 
-static char buf[4096];
+static char buf_volume[256];
+static char buf_mute[256];
+static char buf_type[256];
+
+static bool read_from_proc(const char *command, char *buf, int size) {
+	FILE *f = popen(command, "r");
+	if (f == NULL) {
+		return false;
+	}
+	fread(buf, size, 1, f);
+	pclose(f);
+	return true;
+}
 
 static void sound_update(struct block *b) {
-	FILE *f = popen("pactl list sinks", "r");
-	if (f == NULL) {
+	if (!read_from_proc("pactl get-default-sink", buf_type, sizeof(buf_type))) {
+		return;
+	}
+	if (!read_from_proc("pactl get-sink-volume @DEFAULT_SINK@", buf_volume, sizeof(buf_volume))) {
+		return;
+	}
+	if (!read_from_proc("pactl get-sink-mute @DEFAULT_SINK@", buf_mute, sizeof(buf_mute))) {
 		return;
 	}
 
-	fread(buf, sizeof(buf), 1, f);
-
-	pclose(f);
+	bool bluetooth = strstr(buf_type, "bluez") != NULL;
+	const char *bluetooth_symbol;
+	if (bluetooth) {
+		bluetooth_symbol = "󰂱 ";
+	} else {
+		bluetooth_symbol = "";
+	}
 
 	bool muted;
-	if (strstr(buf, "Mute: yes") != NULL) {
+	if (strstr(buf_mute, "Mute: yes") != NULL) {
 		b->color = 0xffff00;
 		muted = true;
-	} else if (strstr(buf, "Mute: no") != NULL) {
-		b->color = 0xffffff;
+	} else if (strstr(buf_mute, "Mute: no") != NULL) {
+		if (bluetooth) {
+			b->color = 0x2a9df4;
+		} else {
+			b->color = 0xffffff;
+		}
 		muted = false;
 	} else {
 		b->color = 0xff0000;
 		muted = true;
 	}
 
-	char *volume_line = strstr(buf, "Volume:");
+	char *volume_line = strstr(buf_volume, "Volume:");
 	if (volume_line == NULL) {
 		return;
 	}
@@ -59,12 +84,12 @@ static void sound_update(struct block *b) {
 	}
 
 	const char *padding = volume < 10 ? " " : "";
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %s%d%%", icon, padding, volume);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s%s %s%d%%", bluetooth_symbol, icon, padding, volume);
 }
 
 struct block sound_block_init(void) {
 	struct block b;
-	b.interval = 15;
+	b.interval = 1;
 	b.update_after_signal = true;
 	b.update = sound_update;
 	b.color = 0xffffff;
