@@ -21,7 +21,7 @@ static void wifi_block_update(struct block *b) {
 		return;
 	}
 
-	FILE *state = fopen("/sys/class/net/wlp166s0/operstate", "r");
+	FILE *state = fopen("/sys/class/net/wlan0/operstate", "r");
 	if (state == NULL) {
 		return;
 	}

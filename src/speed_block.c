@@ -4,8 +4,8 @@
 
 #include <block.h>
 
-#define WIFI_TX "/sys/class/net/wlp166s0/statistics/tx_bytes"
-#define WIFI_RX "/sys/class/net/wlp166s0/statistics/rx_bytes"
+#define WIFI_TX "/sys/class/net/wlan0/statistics/tx_bytes"
+#define WIFI_RX "/sys/class/net/wlan0/statistics/rx_bytes"
 
 const char *eth_stat(bool tx) {
 	static char file[] = "/sys/class/net/enp0s13f0u1/statistics/tx_bytes";
