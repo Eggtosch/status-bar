@@ -8,6 +8,8 @@ static char buf_volume[256];
 static char buf_mute[256];
 static char buf_type[256];
 
+static bool bt_connected = 0;
+
 static bool read_from_proc(const char *command, char *buf, int size) {
 	FILE *f = popen(command, "r");
 	if (f == NULL) {
@@ -32,8 +34,16 @@ static void sound_update(struct block *b) {
 	bool bluetooth = strstr(buf_type, "bluez") != NULL;
 	const char *bluetooth_symbol;
 	if (bluetooth) {
+		if (!bt_connected) {
+			bt_connected = 1;
+			notify(NOTIFY_NORMAL, 5000, "Bluetooth", "Bluetooth device connected!");
+		}
 		bluetooth_symbol = "󰂱 ";
 	} else {
+		if (bt_connected) {
+			bt_connected = 0;
+			notify(NOTIFY_NORMAL, 5000, "Bluetooth", "Bluetooth device disconnected!");
+		}
 		bluetooth_symbol = "";
 	}
 
