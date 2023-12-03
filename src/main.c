@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
+#include <sys/wait.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 #include <block.h>
 
@@ -16,6 +19,44 @@ struct block wifi_block_init(void);
 struct block eth_block_init(void);
 struct block usbeth_block_init(void);
 struct block speed_block_init(void);
+
+static const char *notify_level_strs[] = {
+	"low", "normal", "critical"
+};
+
+void notify(enum notify_urgency level, int timeout, const char *summary, const char *body, ...) {
+	pid_t pid = fork();
+	if (pid == 0) {
+		if (level < NOTIFY_LOW || level > NOTIFY_CRITICAL) {
+			level = NOTIFY_NORMAL;
+		}
+
+		if (timeout < 0) {
+			timeout = 0;
+		}
+
+		const char *level_str = notify_level_strs[level];
+		char *timeout_str;
+		asprintf(&timeout_str, "%d", timeout);
+		char *body_str;
+		va_list args;
+		va_start(args, body);
+		vasprintf(&body_str, body, args);
+		va_end(args);
+
+		execl(
+			"/usr/bin/notify-send",
+			"/usr/bin/notify-send",
+			"-u", level_str,
+			"-t", timeout_str,
+			summary, body_str,
+			NULL
+		);
+		exit(0);
+	} else {
+		waitpid(pid, NULL, 0);
+	}
+}
 
 const char *hexcolor(uint32_t color) {
 	static char buf[8];
