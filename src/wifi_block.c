@@ -3,6 +3,14 @@
 
 #include <block.h>
 
+enum wifi_status {
+	WIFI_CONNECTED,
+	WIFI_DISCONNECTED,
+	WIFI_AIRPLANE
+};
+
+static enum wifi_status status = WIFI_DISCONNECTED;
+
 static void wifi_block_update(struct block *b) {
 	char line[256];
 
@@ -13,6 +21,14 @@ static void wifi_block_update(struct block *b) {
 		fscanf(rfkill, "%d", &val);
 		airplane_mode = val == 1;
 		fclose(rfkill);
+	}
+
+	if (airplane_mode && status != WIFI_AIRPLANE) {
+		status = WIFI_AIRPLANE;
+		notify(NOTIFY_NORMAL, 5000, "Wifi", "Entering airplane mode!");
+	} else if (!airplane_mode && status == WIFI_AIRPLANE) {
+		status = WIFI_DISCONNECTED;
+		notify(NOTIFY_NORMAL, 5000, "Wifi", "Leaving airplane mode!");
 	}
 
 	if (airplane_mode) {
@@ -29,7 +45,13 @@ static void wifi_block_update(struct block *b) {
 	fgets(line, sizeof(line), state);
 	fclose(state);
 
-	if (strncmp(line, "down", 4) == 0) {
+	bool down = strncmp(line, "down", 4) == 0;
+	if (down && status != WIFI_DISCONNECTED) {
+		status = WIFI_DISCONNECTED;
+		notify(NOTIFY_NORMAL, 5000, "Wifi", "Wifi disconnected!");
+	}
+
+	if (down) {
 		b->color = 0xff0000;
 		strcpy(b->text, "󰖪 down");
 		return;
@@ -38,12 +60,13 @@ static void wifi_block_update(struct block *b) {
 	b->color = 0x00ff00;
 
 	FILE *iwconfig = popen("iwconfig 2>/dev/null", "r");
-        if (iwconfig == NULL) {
-                return;
-        }
+	if (iwconfig == NULL) {
+		return;
+	}
 
 	char essid[100];
-	int value = 1, max = 1;
+	int value = 1;
+	int max = 1;
 	while (fgets(line, sizeof(line), iwconfig)) {
 		char *essid_loc = strstr(line, "ESSID");
 		if (essid_loc != NULL) {
@@ -61,6 +84,11 @@ static void wifi_block_update(struct block *b) {
 			sscanf(link_quality, "Link Quality=%d/%d", &value, &max);
 			break;
 		}
+	}
+
+	if (status == WIFI_DISCONNECTED) {
+		status = WIFI_CONNECTED;
+		notify(NOTIFY_NORMAL, 5000, "Wifi", "Wifi connected to %s", essid);
 	}
 
 	snprintf(b->text, BLOCK_BUFFER_SIZE, " %d%% at %s", value * 100 / max, essid);
