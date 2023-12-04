@@ -3,6 +3,8 @@
 
 #include <block.h>
 
+static int connected = 0;
+
 static void usbeth_block_update(struct block *b) {
 	char line[256];
 
@@ -15,7 +17,16 @@ static void usbeth_block_update(struct block *b) {
 	fgets(line, sizeof(line), state);
 	fclose(state);
 
-	if (strncmp(line, "down", 4) == 0) {
+	bool down = strncmp(line, "down", 4) == 0;
+	if (connected && down) {
+		connected = 0;
+		notify(NOTIFY_NORMAL, 5000, "USB Ethernet", "USB Ethernet disconnected!");
+	} else if (!connected && !down) {
+		connected = 1;
+		notify(NOTIFY_NORMAL, 5000, "USB Ethernet", "USB Ethernet connected!");
+	}
+
+	if (down) {
 		strcpy(b->text, " down");
 		b->color = 0xff0000;
 		return;
