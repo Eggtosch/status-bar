@@ -4,6 +4,8 @@
 
 #include <block.h>
 
+static int connected = 0;
+
 static void eth_block_update(struct block *b) {
 	char operstate_file[] = "/sys/class/net/enp0s13f0u1/operstate";
 	char speed_file[] = "/sys/class/net/enp0s13f0u1/speed";
@@ -26,7 +28,16 @@ static void eth_block_update(struct block *b) {
 	fgets(line, sizeof(line), state);
 	fclose(state);
 
-	if (strncmp(line, "down", 4) == 0) {
+	bool down = strncmp(line, "down", 4) == 0;
+	if (connected && down) {
+		connected = 0;
+		notify(NOTIFY_NORMAL, 5000, "Ethernet", "Ethernet disconnected!");
+	} else if (!connected && !down) {
+		connected = 1;
+		notify(NOTIFY_NORMAL, 5000, "Ethernet", "Ethernet connected!");
+	}
+
+	if (down) {
 		strcpy(b->text, "󰌙 down");
 		b->color = 0xff0000;
 		return;
