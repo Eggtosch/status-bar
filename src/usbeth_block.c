@@ -10,6 +10,10 @@ static void usbeth_block_update(struct block *b) {
 
 	FILE *state = fopen("/sys/class/net/enp0s20f0u5/operstate", "r");
 	if (state == NULL) {
+		if (connected) {
+			connected = 0;
+			notify(NOTIFY_NORMAL, 5000, "USB Ethernet", "USB Ethernet disconnected!");
+		}
 		strcpy(b->text, "");
 		return;
 	}

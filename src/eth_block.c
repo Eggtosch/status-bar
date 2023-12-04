@@ -21,6 +21,10 @@ static void eth_block_update(struct block *b) {
 
 	FILE *state = fopen(operstate_file, "r");
 	if (state == NULL) {
+		if (connected) {
+			connected = 0;
+			notify(NOTIFY_NORMAL, 5000, "Ethernet", "Ethernet disconnected!");
+		}
 		strcpy(b->text, "");
 		return;
 	}
