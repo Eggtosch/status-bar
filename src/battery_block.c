@@ -43,23 +43,22 @@ static void battery_update(struct block *b) {
 		return;
 	}
 
-	char status[20];
-	FILE *f2 = fopen("/sys/class/power_supply/BAT1/status", "r");
+	int power_connected;
+	FILE *f2 = fopen("/sys/class/power_supply/ACAD/online", "r");
 	if (f2 == NULL) {
 		fclose(f);
 		return;
 	}
 
 	fscanf(f, "%d", &charge_now);
-	fscanf(f2, "%s", status);
+	fscanf(f2, "%d", &power_connected);
 
 	float charge_percent = charge_now / (double) g_charge_full * 100;
-	int discharging = strcmp(status, "Discharging") == 0;
 
-	if (discharging && charging == 1) {
+	if (!power_connected && charging == 1) {
 		charging = 0;
 		notify(NOTIFY_NORMAL, 5000, "Battery", "Battery charger disconnected!");
-	} else if (!discharging && charging == 0) {
+	} else if (power_connected && charging == 0) {
 		charging = 1;
 		notify(NOTIFY_NORMAL, 5000, "Battery", "Battery charger connected!");
 	}
@@ -84,10 +83,10 @@ static void battery_update(struct block *b) {
 	}
 
 	const char *icon;
-	if (discharging) {
-		icon = bat_levels[index];
-	} else {
+	if (power_connected) {
 		icon = bat_levels_chrg[index];
+	} else {
+		icon = bat_levels[index];
 	}
 	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s %.2f%%", icon, charge_percent);
 
