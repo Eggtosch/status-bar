@@ -1,20 +1,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <dirent.h>
 
 #include <block.h>
 
+#define BUFSIZE 256
+
 static int connected = 0;
 
-static void eth_block_update(struct block *b) {
-	char operstate_file[] = "/sys/class/net/enp0s13f0u1/operstate";
-	char speed_file[] = "/sys/class/net/enp0s13f0u1/speed";
-	for (int i = 0; i < 4; i++) {
-		operstate_file[25] = '1' + i;
-		speed_file[25] = '1' + i;
-		if (access(operstate_file, F_OK) == 0) {
+static int find_interface(char *operstate_file, char *speed_file) {
+	DIR *d = opendir("/sys/class/net/");
+	struct dirent *de;
+	int found = 0;
+	while ((de = readdir(d)) != NULL) {
+		if (de->d_type == DT_LNK && strstr(de->d_name, "enp0s13f0") != NULL) {
+			snprintf(operstate_file, BUFSIZE, "/sys/class/net/%s/operstate", de->d_name);
+			snprintf(speed_file, BUFSIZE, "/sys/class/net/%s/speed", de->d_name);
+			found = 1;
 			break;
 		}
+	}
+
+	closedir(d);
+	return found;
+}
+
+static void eth_block_update(struct block *b) {
+	char operstate_file[BUFSIZE];
+	char speed_file[BUFSIZE];
+	if (find_interface(operstate_file, speed_file) == 0) {
+		strcpy(b->text, "");
+		return;
 	}
 
 	char line[256];

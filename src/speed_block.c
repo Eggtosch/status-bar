@@ -1,21 +1,38 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <string.h>
 
 #include <block.h>
 
 #define WIFI_TX "/sys/class/net/wlan0/statistics/tx_bytes"
 #define WIFI_RX "/sys/class/net/wlan0/statistics/rx_bytes"
 
-const char *eth_stat(bool tx) {
-	static char file[] = "/sys/class/net/enp0s13f0u1/statistics/tx_bytes";
-	for (int i = 0; i < 4; i++) {
-		file[25] = '1' + i;
-		file[38] = tx ? 't' : 'r';
-		if (access(file, F_OK) == 0) {
-			return file;
+#define BUFSIZE 256
+
+static int find_interface(char *tx_file, const char *dir) {
+	DIR *d = opendir("/sys/class/net/");
+	struct dirent *de;
+	int found = 0;
+	while ((de = readdir(d)) != NULL) {
+		if (de->d_type == DT_LNK && strstr(de->d_name, "enp0s13f0") != NULL) {
+			snprintf(tx_file, BUFSIZE, "/sys/class/net/%s/statistics/%s_bytes", de->d_name, dir);
+			found = 1;
+			break;
 		}
 	}
+
+	closedir(d);
+	return found;
+}
+
+const char *eth_stat(bool tx) {
+	static char file[BUFSIZE];
+	if (find_interface(file, tx ? "tx" : "rx") != 0) {
+		return file;
+	}
+
 	return "";
 }
 
