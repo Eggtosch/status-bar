@@ -98,7 +98,7 @@ static void wifi_block_update(struct block *b) {
 
 struct block wifi_block_init(void) {
 	struct block b;
-	b.interval = 1;
+	b.interval = 2;
 	b.update_after_signal = false;
 	b.update = wifi_block_update;
 	b.color = 0xffffff;

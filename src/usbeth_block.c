@@ -52,7 +52,7 @@ static void usbeth_block_update(struct block *b) {
 
 struct block usbeth_block_init(void) {
 	struct block b;
-	b.interval = 1;
+	b.interval = 5;
 	b.update_after_signal = false;
 	b.update = usbeth_block_update;
 	b.color = 0xffffff;

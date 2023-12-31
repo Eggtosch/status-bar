@@ -44,7 +44,7 @@ struct block ram_block_init(void) {
 	cache_total_memory();
 
 	struct block b;
-	b.interval = 1;
+	b.interval = 2;
 	b.update_after_signal = false;
 	b.update = ram_block_update;
 	b.color = 0xffffff;

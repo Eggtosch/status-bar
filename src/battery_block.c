@@ -98,7 +98,7 @@ struct block battery_block_init(void) {
 	cache_charge_full();
 
 	struct block b;
-	b.interval = 1;
+	b.interval = 2;
 	b.update_after_signal = false;
 	b.update = battery_update;
 	b.color = 0xffffff;
