@@ -15,6 +15,8 @@ struct block {
 	char buffer[BLOCK_BUFFER_SIZE];
 };
 
+char *iface_get(char *pattern);
+
 enum notify_urgency {
 	NOTIFY_LOW,
 	NOTIFY_NORMAL,

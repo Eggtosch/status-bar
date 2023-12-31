@@ -3,18 +3,37 @@
 
 #include <block.h>
 
+#define BUFSIZE 256
+
 static int connected = 0;
 
-static void usbeth_block_update(struct block *b) {
-	char line[256];
+static int find_interface(char *operstate_file, char *speed_file) {
+	char *iface = iface_get("enp0s20f0");
+	if (iface == NULL) {
+		return 0;
+	}
 
-	FILE *state = fopen("/sys/class/net/enp0s20f0u5/operstate", "r");
-	if (state == NULL) {
+	snprintf(operstate_file, BUFSIZE, "/sys/class/net/%s/operstate", iface);
+	snprintf(speed_file, BUFSIZE, "/sys/class/net/%s/speed", iface);
+	return 1;
+}
+
+static void usbeth_block_update(struct block *b) {
+	char line[BUFSIZE];
+	char operstate_file[BUFSIZE];
+	char speed_file[BUFSIZE];
+
+	if (find_interface(operstate_file, speed_file) == 0) {
 		if (connected) {
 			connected = 0;
 			notify(NOTIFY_NORMAL, 5000, "USB Ethernet", "USB Ethernet disconnected!");
 		}
 		strcpy(b->text, "");
+		return;
+	}
+
+	FILE *state = fopen(operstate_file, "r");
+	if (state == NULL) {
 		return;
 	}
 
@@ -38,7 +57,7 @@ static void usbeth_block_update(struct block *b) {
 
 	b->color = 0x00ff00;
 
-	FILE *speed = fopen("/sys/class/net/enp0s20f0u5/speed", "r");
+	FILE *speed = fopen(speed_file, "r");
 	if (speed == NULL) {
 		return;
 	}

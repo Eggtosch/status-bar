@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <string.h>
 
 #include <block.h>
 
@@ -56,6 +58,35 @@ void notify(enum notify_urgency level, int timeout, const char *summary, const c
 	} else {
 		waitpid(pid, NULL, 0);
 	}
+}
+
+#define REFRESH_IFACES_TIME 5
+static int refresh_ifaces_countdown = REFRESH_IFACES_TIME;
+
+char *iface_get(char *pattern) {
+	static DIR *d = NULL;
+	if (refresh_ifaces_countdown <= 0) {
+		refresh_ifaces_countdown = REFRESH_IFACES_TIME;
+		if (d != NULL) {
+			closedir(d);
+			d = NULL;
+		}
+	}
+
+	if (d == NULL) {
+		d = opendir("/sys/class/net/");
+	} else {
+		rewinddir(d);
+	}
+
+	struct dirent *de;
+	while ((de = readdir(d)) != NULL) {
+		if (de->d_type == DT_LNK && strstr(de->d_name, pattern) != NULL) {
+			return de->d_name;
+		}
+	}
+
+	return NULL;
 }
 
 const char *hexcolor(uint32_t color) {
@@ -131,6 +162,7 @@ int main(void) {
 			t.tv_sec = 1;
 			t.tv_nsec = 0;
 			seconds++;
+			refresh_ifaces_countdown--;
 		} else {
 			got_signal = true;
 		}

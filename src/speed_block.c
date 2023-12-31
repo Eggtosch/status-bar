@@ -12,19 +12,13 @@
 #define BUFSIZE 256
 
 static int find_interface(char *tx_file, const char *dir) {
-	DIR *d = opendir("/sys/class/net/");
-	struct dirent *de;
-	int found = 0;
-	while ((de = readdir(d)) != NULL) {
-		if (de->d_type == DT_LNK && strstr(de->d_name, "enp0s13f0") != NULL) {
-			snprintf(tx_file, BUFSIZE, "/sys/class/net/%s/statistics/%s_bytes", de->d_name, dir);
-			found = 1;
-			break;
-		}
+	char *iface = iface_get("enp0s13f0");
+	if (iface == NULL) {
+		return 0;
 	}
 
-	closedir(d);
-	return found;
+	snprintf(tx_file, BUFSIZE, "/sys/class/net/%s/statistics/%s_bytes", iface, dir);
+	return 1;
 }
 
 const char *eth_stat(bool tx) {

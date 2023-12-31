@@ -10,20 +10,14 @@
 static int connected = 0;
 
 static int find_interface(char *operstate_file, char *speed_file) {
-	DIR *d = opendir("/sys/class/net/");
-	struct dirent *de;
-	int found = 0;
-	while ((de = readdir(d)) != NULL) {
-		if (de->d_type == DT_LNK && strstr(de->d_name, "enp0s13f0") != NULL) {
-			snprintf(operstate_file, BUFSIZE, "/sys/class/net/%s/operstate", de->d_name);
-			snprintf(speed_file, BUFSIZE, "/sys/class/net/%s/speed", de->d_name);
-			found = 1;
-			break;
-		}
+	char *iface = iface_get("enp0s13f0");
+	if (iface == NULL) {
+		return 0;
 	}
 
-	closedir(d);
-	return found;
+	snprintf(operstate_file, BUFSIZE, "/sys/class/net/%s/operstate", iface);
+	snprintf(speed_file, BUFSIZE, "/sys/class/net/%s/speed", iface);
+	return 1;
 }
 
 static void eth_block_update(struct block *b) {
