@@ -20,6 +20,7 @@ struct block cpu_block_init(void);
 struct block wifi_block_init(void);
 struct block eth_block_init(void);
 struct block usbeth_block_init(void);
+struct block vpn_block_init(void);
 struct block speed_block_init(void);
 
 static const char *notify_level_strs[] = {
@@ -111,6 +112,7 @@ int main(void) {
 	uint64_t seconds = 0;
 	struct block blocks[] = {
 		speed_block_init(),
+		vpn_block_init(),
 		usbeth_block_init(),
 		eth_block_init(),
 		wifi_block_init(),
