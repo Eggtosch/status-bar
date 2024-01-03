@@ -9,6 +9,7 @@ static char buf_mute[256];
 static char buf_type[256];
 
 static bool bt_connected = 0;
+static bool usb_connected = 0;
 
 static bool read_from_proc(const char *command, char *buf, int size) {
 	FILE *f = popen(command, "r");
@@ -36,15 +37,31 @@ static void sound_update(struct block *b) {
 	if (bluetooth) {
 		if (!bt_connected) {
 			bt_connected = 1;
-			notify(NOTIFY_NORMAL, 5000, "Bluetooth", "Bluetooth device connected!");
+			notify(NOTIFY_NORMAL, 5000, "Audio", "Bluetooth device connected!");
 		}
 		bluetooth_symbol = "󰂱 ";
 	} else {
 		if (bt_connected) {
 			bt_connected = 0;
-			notify(NOTIFY_NORMAL, 5000, "Bluetooth", "Bluetooth device disconnected!");
+			notify(NOTIFY_NORMAL, 5000, "Audio", "Bluetooth device disconnected!");
 		}
 		bluetooth_symbol = "";
+	}
+
+	bool usb = strstr(buf_type, "usb") != NULL;
+	const char *usb_symbol;
+	if (usb) {
+		if (!usb_connected) {
+			usb_connected = 1;
+			notify(NOTIFY_NORMAL, 5000, "Audio", "Audio now playing over usb");
+		}
+		usb_symbol = "󰕓 ";
+	} else {
+		if (usb_connected) {
+			usb_connected = 0;
+			notify(NOTIFY_NORMAL, 5000, "Audio", "Audio over usb disconnected");
+		}
+		usb_symbol = "";
 	}
 
 	bool muted;
@@ -94,7 +111,7 @@ static void sound_update(struct block *b) {
 	}
 
 	const char *padding = volume < 10 ? " " : "";
-	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s%s %s%d%%", bluetooth_symbol, icon, padding, volume);
+	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s%s%s %s%d%%", usb_symbol, bluetooth_symbol, icon, padding, volume);
 }
 
 struct block sound_block_init(void) {
