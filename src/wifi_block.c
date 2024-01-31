@@ -45,6 +45,13 @@ static void wifi_block_update(struct block *b) {
 	fgets(line, sizeof(line), state);
 	fclose(state);
 
+	bool monitor_mode = strncmp(line, "dormant", 7) == 0;
+	if (monitor_mode) {
+		b->color = 0x00ff00;
+		strcpy(b->text, "  monitor mode");
+		return;
+	}
+
 	bool down = strncmp(line, "down", 4) == 0;
 	if (down && status != WIFI_DISCONNECTED) {
 		status = WIFI_DISCONNECTED;
