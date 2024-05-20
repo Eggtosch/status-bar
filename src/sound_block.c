@@ -1,6 +1,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include <block.h>
 
@@ -114,7 +117,30 @@ static void sound_update(struct block *b) {
 	snprintf(b->text, BLOCK_BUFFER_SIZE, "%s%s%s %s%d%%", usb_symbol, bluetooth_symbol, icon, padding, volume);
 }
 
+static void *pactl_subscribe(void *vptr_pid) {
+	pid_t pid = (pid_t)(long) vptr_pid;
+	FILE *pactl = popen("pactl subscribe", "r");
+	if (pactl == NULL) {
+		return NULL;
+	}
+
+	ssize_t read = 0;
+	char *line = NULL;
+	size_t n = 0;
+
+	while ((read = getline(&line, &n, pactl)) != -1) {
+		if (strstr(line, "on sink #") != NULL) {
+			kill(pid, SIGUSR1);
+		}
+	}
+
+	return NULL;
+}
+
 struct block sound_block_init(void) {
+	pthread_t pactl_subscribe_thread = 0;
+	pthread_create(&pactl_subscribe_thread, NULL, pactl_subscribe, (void*)(long) getpid());
+
 	struct block b;
 	b.interval = 5;
 	b.update_after_signal = true;
