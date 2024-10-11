@@ -9,7 +9,10 @@ enum wifi_status {
 	WIFI_AIRPLANE
 };
 
+#define MIN_DISCONNECTED_TIME (5)
+
 static enum wifi_status status = WIFI_DISCONNECTED;
+static int disconnected_time = 0;
 
 static void wifi_block_update(struct block *b) {
 	char line[256];
@@ -53,7 +56,8 @@ static void wifi_block_update(struct block *b) {
 	}
 
 	bool down = strncmp(line, "down", 4) == 0;
-	if (down && status != WIFI_DISCONNECTED) {
+	disconnected_time = down ? disconnected_time + 1 : 0;
+	if (down && status != WIFI_DISCONNECTED && disconnected_time >= MIN_DISCONNECTED_TIME) {
 		status = WIFI_DISCONNECTED;
 		notify(NOTIFY_NORMAL, 5000, "Wifi", "Wifi disconnected!");
 	}
