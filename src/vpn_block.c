@@ -3,14 +3,22 @@
 #include <block.h>
 
 static void vpn_update(struct block *b) {
-	char *iface = iface_get("home-server");
-	if (iface == NULL) {
-		strcpy(b->text, "");
-		b->color = 0xffffff;
-	} else {
+	char *home_iface = iface_get("home-server");
+	if (home_iface != NULL) {
 		strcpy(b->text, "󰌾 home");
 		b->color = 0x00ff00;
+		return;
 	}
+
+	char *work_iface = iface_get("work");
+	if (work_iface != NULL) {
+		strcpy(b->text, "󰌾 work");
+		b->color = 0x00ff00;
+		return;
+	}
+
+	strcpy(b->text, "");
+	b->color = 0xffffff;
 }
 
 struct block vpn_block_init(void) {
