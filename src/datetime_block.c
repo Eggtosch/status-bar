@@ -6,7 +6,7 @@
 static void datetime_update(struct block *b) {
 	time_t t = time(NULL);
 	struct tm *tm = localtime(&t);
-	strftime(b->text, BLOCK_BUFFER_SIZE, "KW %W: %d.%m.%Y %H:%M:%S", tm);
+	strftime(b->text, BLOCK_BUFFER_SIZE, "KW %V: %d.%m.%Y %H:%M:%S", tm);
 }
 
 struct block datetime_block_init(void) {
